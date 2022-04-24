@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link type="text/css" rel="stylesheet" href="reset.css" />
+    <link type="text/css" rel="stylesheet" href="site.css" />
+  </head>
+  <body>
+    <header>
+      <a  href="index.html">About</a>
+      <a target="_blank" href="https://orcid.org/0000-0002-4450-1216">Publications</a>
+      <a href="docs/cv.pdf">CV</a>
+      <a href="talks.html">Talks</a>
+    </header>
+    <main>
+      <div class="intro">
+        <p>
+          Links to media for upcoming talks will appear here.
+        </p>
+      </div>
+    </main>
+    <footer>
+      <a href="mailto:anthony.arnold@uqconnect.edu.au"><ion-icon name="mail"></ion-icon></a>
+      <a target="_blank" href="https://twitter.com/HoppyAstro"><ion-icon name="logo-twitter"></ion-icon></a>
+      <a target="_blank" href="https://github.com/anthony-arnold"><ion-icon name="logo-github"></ion-icon></a>
+      <a target="_blank" href="www.linkedin.com/in/anthony-arnold-astrophys"><ion-icon name="logo-linkedin"></ion-icon></a><span class="copyright"></span>
+    </footer>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+      (function() {
+          document.querySelectorAll(".copyright").forEach(function(span) {
+              span.innerHTML = "&copy; " + (new Date().getFullYear());
+          })
+      })()
+    </script>
+  </body>
+</html>

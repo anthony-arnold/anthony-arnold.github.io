@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link type="text/css" rel="stylesheet" href="reset.css" />
+    <link type="text/css" rel="stylesheet" href="site.css" />
+  </head>
+  <body>
+    <header>
+      <a target="_blank" href="https://orcid.org/0000-0002-4450-1216">Publications</a>
+      <a href="docs/cv.pdf">CV</a>
+      <a href="talks.html">Talks</a>
+    </header>
+    <main>
+      <div class="intro">
+        <div class="avatar">
+        </div>
+        <p>
+          I&apos;m a PhD student at the University of Queensland, in the School of Mathematics and Physics. I study numerical methods for <a href="https://en.wikipedia.org/wiki/N-body_simulation" target="_blank">gravitational N-body simulations</a> and the evolution of <a href="https://en.wikipedia.org/wiki/Globular_cluster" target="_blank">star clusters</a> using high performance computing.
+        </p>
+        <p>
+          Also, I&apos;m a software engineer in the aerospace industry. I specialise in the modeling and simulation of physical phenomena. I like to learn how stuff works and figure out how to represent it in code.
+        </p>
+        <p>
+          <a href="https://pintofscience.com.au" target="_blank">Join me for a beer.</a>
+        </p>
+      </div>
+    </main>
+    <footer>
+      <a href="mailto:anthony.arnold@uqconnect.edu.au"><ion-icon name="mail"></ion-icon></a>
+      <a target="_blank" href="https://twitter.com/HoppyAstro"><ion-icon name="logo-twitter"></ion-icon></a>
+      <a target="_blank" href="https://github.com/anthony-arnold"><ion-icon name="logo-github"></ion-icon></a>
+      <a target="_blank" href="www.linkedin.com/in/anthony-arnold-astrophys"><ion-icon name="logo-linkedin"></ion-icon></a><span class="copyright"></span>
+    </footer>
+
+    <canvas id="cluster" resize></canvas>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+      (function() {
+          document.querySelectorAll(".copyright").forEach(function(span) {
+              span.innerHTML = "&copy; " + (new Date().getFullYear());
+          })
+      })()
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js" integrity="sha512-ovjLI1ZcZe6bw+ImQ21r+sv8q/Vwob2kq7tFidK6E1LWfi0T4uobbmpfEU1//a9h9o5Kkt+MnMWf6rWlg0EiMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/paperscript" canvas="cluster">
+     var EPS = 1.0e-2;
+     var DT = 1.0
+
+     var Body = function(pos, vel, mass) {
+       this.pos = pos;
+       this.vel = vel;
+       this.mass = mass;
+
+       var body = new CompoundPath({
+         children: [
+           new Path.Circle({
+	     radius: mass
+           })
+         ],
+         fillColor: 'white'
+       })
+
+       this.item = new Group({
+         children: [body],
+         transformContent: false,
+         position: this.pos
+       })
+     }
+
+     Body.prototype.force = function(bodies) {
+       this.acc = new Point(0, 0);
+       for (var i = 0; i < bodies.length; i++) {
+         var dx = bodies[i].pos - this.pos;
+         var r2 = dx.dot(dx);
+
+         if (r2 === 0.0) continue;
+
+         var rinv = 1.0 / Math.sqrt(r2) + EPS;
+         var rinv2 = rinv*rinv;
+         var mrinv3 = bodies[i].mass * rinv2 * rinv;
+         this.acc += dx * mrinv3;
+       }
+     }
+
+     Body.prototype.kick = function(dt) {
+       this.vel += this.acc * dt;
+     }
+
+     Body.prototype.drift = function(dt) {
+       this.pos += this.vel * dt;
+       this.item.set({
+         position: this.pos
+       })
+     }
+
+     var bodies = [
+       new Body(
+	 new Point(view.size / 2 - 100),
+	 new Point(0.0, 5.0e-2),
+	 1.5
+       )
+     ];
+
+     function addBody() {
+       var pos = Point.random() * view.size;
+       var vel = Point.random() * 10e-2;
+       var body = new Body(pos, vel, Math.random() * 1.5);
+       bodies.push(body);
+     }
+
+     function grav() {
+       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].force(bodies);
+     }
+
+     function kick(dt) {
+       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].kick(dt);
+     }
+
+     function drift(dt) {
+       for (var i = 0, l = bodies.length; i < l; i++)  bodies[i].drift(dt);
+     }
+
+     function purge() {
+       var i = 0;
+       while (i < bodies.length) {
+         if (bodies[i].pos.x > view.size.width + 100 ||
+             bodies[i].pos.x < -100 ||
+             bodies[i].pos.y > view.size.height + 100 ||
+             bodies[i].pos.y < -100) {
+           bodies[i].item.remove();
+           bodies.splice(i, 1);
+         }
+         else {
+           i++;
+         }
+       }
+
+     }
+
+     grav();
+     kick(DT/2);
+
+     var counter = 120;
+
+     function onFrame() {
+       drift(DT);
+       grav();
+       kick(DT);
+
+       counter--;
+       if (counter === 0) {
+         counter = 120;
+         if (bodies.length < 150) {
+           addBody();
+         }
+       }
+       purge();
+     }
+
+    </script>
+  </body>
+</html>

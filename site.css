@@ -1,0 +1,113 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #20211c;
+    color: white;
+    padding-top: 8em;
+}
+
+a, a:visited {
+    color: #7b9ad1;
+}
+a:hover, a:active {
+    color: white;
+}
+
+body > header {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    max-width: 1024px;
+    margin-bottom: 4em;
+}
+
+body > header a {
+    font-size: 18pt;
+    min-width: 136px;
+    text-align: center;
+    border: solid 1px #7b9ad1;
+    border-radius: 6px;
+    margin: 5px 10px;
+    padding: 5px;
+}
+
+body > header a:hover {
+    background-color: #7b9ad1;
+    color: #20211c;
+}
+
+body > footer {
+    margin: auto;
+    width: 80%;
+    max-width: 1024px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+body > footer a {
+    margin: 5px 10px;
+    padding: 5px;
+    font-size: 16pt;
+}
+
+body > footer a:first-child {
+    margin-left: 0;
+}
+
+
+body > footer .copyright {
+    margin: 5px 10px;
+    padding: 5px;
+    font-size: 16pt;
+}
+
+
+body > main {
+    margin-top: 12px;
+}
+
+main {
+    position: relative;
+}
+
+
+.intro {
+    width: 80%;
+    max-width: 1024px;
+    margin: auto;
+}
+
+.intro p {
+    font-size: 16pt;
+    line-height: 1.5;
+    margin-bottom: 1.5em;
+}
+
+.avatar {
+    width: 172px;
+    height: 172px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: auto;
+    background-image: url("images/avatar-small.png");
+    background-size: auto 172px;
+}
+
+
+.intro .avatar {
+    margin-bottom: 24px;
+}
+
+canvas[resize] {
+    width: 100%;
+    height: 100%;
+}
+
+#cluster {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -10000;
+}
