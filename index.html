@@ -101,14 +101,7 @@
        })
      }
 
-     var bodies = [
-       new Body(
-	 new Point(view.size / 2 - 100),
-	 new Point(0.0, 5.0e-2),
-	 1.5
-       )
-     ];
-
+     var bodies = [];
      function addBody() {
        var pos = Point.random() * view.size;
        var vel = Point.random() * 10e-2;
@@ -148,7 +141,7 @@
      grav();
      kick(DT/2);
 
-     var counter = 120;
+     var counter = 1;
 
      function onFrame() {
        drift(DT);
