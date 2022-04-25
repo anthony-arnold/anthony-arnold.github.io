@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link type="text/css" rel="stylesheet" href="reset.css" />
+    <link type="text/css" rel="stylesheet" href="talk.css" />
+
+    <style>
+      .btn {
+        width: 3em;
+        height: 1em;
+        text-align: center;
+        padding: 1em 0;
+        margin-right: 10px;
+        color: black;
+      }
+      .btns {
+        position: fixed;
+        top: 0.5em;
+        left: 0.5em;
+        display: flex;
+        flex-direction: row;
+        z-index: 2;
+      }
+
+      .modes {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        justify-content: center;
+      }
+
+      .mode {
+        width: 80%;
+        margin: 10px auto;
+        border: solid 2px black;
+        border-radius: 6px;
+        text-align: center;
+        padding: 2em 0;
+        font-size: 18pt;
+      }
+
+      .easy.mode {
+        background-color: #008000;
+        color: white;
+      }
+      .easy.mode:hover, .easy.mode:active {
+        background-color: #3dc16a;
+        color: black;
+      }
+
+      .hard.mode {
+        background-color: #000000;
+        color: white;
+      }
+      .hard.mode:hover, .hard.mode:active {
+        background-color: #880000;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js" integrity="sha512-ovjLI1ZcZe6bw+ImQ21r+sv8q/Vwob2kq7tFidK6E1LWfi0T4uobbmpfEU1//a9h9o5Kkt+MnMWf6rWlg0EiMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <div class="btns">
+      <a href="javascript:void(null)" class="btn" id="home">
+        <ion-icon name="home-outline"></ion-icon>
+      </a>
+      <a href="javascript:void(null)" class="btn" id="back">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+
+    <script type="text/javascript">
+     window.onload = function() {
+       window.currSlide = 0;
+       window.slides = []
+       window.loadSlide = function(x) {
+         if (window.slides.length >= window.currSlide) {
+           window.slides[window.currSlide].classList.remove('active')
+         }
+
+         window.currSlide = x
+         window.slides[window.currSlide].classList.add('active')
+       }
+
+       window.setDifficulty = function(d) {
+         window.slides = document.querySelectorAll('.slide.' + d);
+         window.difficulty = d;
+         window.nextSlide();
+       }
+
+       window.nextSlide = function() {
+         if (window.slides.length > window.currSlide) {
+           window.loadSlide(window.currSlide + 1)
+         }
+       }
+       window.prevSlide = function() {
+         if (window.currSlide !== 0) {
+           window.loadSlide(window.currSlide - 1)
+         }
+       }
+
+       document.getElementById('back').onclick = function() {
+         window.prevSlide();
+       }
+       document.getElementById('home').onclick = function() {
+         window.loadSlide(0);
+       }
+
+       document.querySelector('.easy.mode').onclick = function() {
+         window.setDifficulty('easy')
+       }
+       document.querySelector('.hard.mode').onclick = function() {
+         window.setDifficulty('hard')
+       }
+     }
+    </script>
+
+    <div class="active easy hard slide">
+      <div class="modes">
+        <a href="javascript:void(null)" class="easy mode">
+          EASY MODE
+        </a>
+        <a href="javascript:void(null)" class="hard mode">
+          HARD MODE <ion-icon name="skull-outline"></ion-icon>
+        </a>
+      </div>
+    </div>
+
+    <canvas id="last" class="easy hard slide"></canvas>
+    <script type="text/paperscript" canvas="last">
+
+
+     var rectangle = new Rectangle(new Point(50, 50), new Point(150, 100));
+     var radius = new Size(20, 20);
+     var path = new Path.Rectangle(rectangle, radius);
+
+     path.onFrame = function() {
+       path.fillColor = window.difficulty === 'easy' ? 'green' : 'red';
+     }
+
+    </script>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+  </body>
+</html>
