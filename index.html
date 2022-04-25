@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Open+Sans">
     <link type="text/css" rel="stylesheet" href="reset.css" />
@@ -47,8 +49,8 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js" integrity="sha512-ovjLI1ZcZe6bw+ImQ21r+sv8q/Vwob2kq7tFidK6E1LWfi0T4uobbmpfEU1//a9h9o5Kkt+MnMWf6rWlg0EiMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/paperscript" canvas="cluster">
-     var EPS = 1.0e-2;
-     var DT = 1.0
+     var EPS = 1.0e-1;
+     var DT = 1.0e-1
 
      var Body = function(pos, vel, mass) {
        this.pos = pos;
