@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>2 Billion Years in 5 Days</title>
+
+    <link type="text/css" rel="stylesheet" href="css/may22.css" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </head>
+  <body class="impress-not-supported">
+
+    <div class="fallback-message">
+      <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+      <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+    </div>
+
+    <div id="impress"
+         data-transition-duration="1000"
+         data-width="1024"
+         data-height="768"
+         data-max-scale="3"
+         data-min-scale="0"
+         data-perspective="1000">
+
+
+      <div id="title" class="title step slide" data-x="0" data-y="-1500" data-scale="2" data-rotate-y="90">
+        <h1>2 Billion Years in Five Days</h1>
+        <h2>Where astrophysics meets supercomputers.</h2>
+        <img alt="The OzSTAR supercomputer." src="https://supercomputing.swin.edu.au/wp-content/uploads/2020/05/OzSTAR_hires_image-538x280.jpg">
+        <div class="subtitle">
+          <p>May 2022</p>
+          <p>
+            Anthony Arnold<br />
+            University of Queensland<br />
+            School of Maths and Physics
+          </p>
+        </div>
+      </div>
+
+      <div id="orion" class="step slide orion" data-y="0" data-x="0">
+        <strong class="fun">Fun Fact</strong>
+        <p>
+          Nyeeruna chases the Yugarilya sisters across the sky and is challenged by Kambugudha.
+        </p>
+        <p class="ref">
+          Hamacher, D. W., 2017, <em>Observations of red-giant variable stars by Aboriginal Australians</em>, The Australian Journal of Anthropology.
+        </p>
+        <img alt="Orion, Taurus and Pleiades" src="/images/orion.jpg" />
+      </div>
+
+      <div class="step slide" data-x="0" data-y="1500">
+        <h1>What is Gravity?</h1>
+        <h2 id="whatgoesup">What goes up must come down.</h2>
+        <canvas id="gravity" resize></canvas>
+        <script type='text/paperscript' canvas="gravity">
+          var zoomed = false;
+          var RAD = 10;
+          var pos = new Point(
+              view.size.width / 2,
+              view.size.height / 2 - 200
+          )
+          var target = view.size.height / 2;
+          var vel = 0;
+          var acc = 0.1;
+
+          var circle = new Path.Circle({
+	      radius: RAD,
+              fillColor: 'red'
+          })
+
+          var ball = new Group({
+              children: [circle],
+              transformContent: false,
+              position: pos
+          })
+
+          var r = 3000;
+          var surface = new Path.Circle({
+              radius: r,
+              strokeColor: 'green',
+              center: new Point(
+                  view.size.width / 2,
+                  view.size.height / 2 + r + RAD
+              )
+          })
+
+          function onFrame() {
+              if (zoomed) {
+                  if (pos.x - RAD <= target) {
+                      vel = acc - vel;
+                  }
+                  pos.x += vel;
+              }
+              else {
+                  if (pos.y + RAD >= target) {
+                      // Kick up
+                      vel = acc - vel;
+                  }
+                  pos.y += vel;
+              }
+              vel += acc;
+
+              ball.set({
+                  position: pos
+              });
+          }
+
+          function onMouseUp() {
+              if (!zoomed) {
+                  vel = 0;
+                  acc *= -1;
+                  pos.x = view.size.width / 2 + 300;
+                  pos.y = view.size.height / 2;
+                  ball.set({
+                      position: pos
+                  });
+
+                  r = 170;
+                  surface.remove()
+                  surface = new Path.Circle({
+                      radius: r,
+                      strokeColor: 'green',
+                      center: new Point(
+                          view.size.width / 2,
+                          view.size.height / 2
+                      )
+                  });
+                  target = view.size.width / 2 + r
+
+                  zoomed = true;
+
+                  document.getElementById('whatgoesup').innerText = 'What goes out maybe comes back in?'
+              }
+          }
+        </script>
+      </div>
+
+      <div id="field" class="step slide" data-x="1200">
+        <h1>Gravity is a Force</h1>
+        <div class='centering'>
+          <img alt="Gravitational field" src="/images/field.svg" />
+        </div>
+      </div>
+
+      <div id="rocket" class="step slide" data-x="2400">
+        <h1>Gravity is a Weak</h1>
+        <div class='centering'>
+          <video autoplay controls loop>
+            <source src="/videos/Launch_of_Skylab.ogx"
+                    type="video/ogg">
+              <a href="/videos/Launch_of_Skylab.ogx" target="_blank">Download the video.</a>
+          </video>
+        </div>
+      </div>
+
+      <div class="step slide" data-y="3000" data-x="0" data-rotate-y="90">
+        <h1>Newton's Law</h1>
+        <h2>Universal Gravitation</h2>
+
+        $$F = G\frac{m_1 m_2}{r^2}$$
+
+        <ul>
+          <li>\(F\) is the force - it has direction and magnitude.</li>
+          <li>\(G\) is the gravitational constant - it's a number.</li>
+          <li>\(m_1\) and \(m_2\) are the masses of two bodies.</li>
+          <li>\(r\) is the distance between them.</li>
+        </ul>
+      </div>
+
+      <div class="step slide" data-y="4500" data-x="0">
+        <h1>Two-body Motion</h1>
+        <h2>It's easy to do with maths.</h2>
+        <canvas id="2body" resize></canvas>
+        <script type='text/paperscript' canvas="2body">
+          var EPS = 0;
+          var DT = 1.0
+
+          var Body = function(pos, vel, mass) {
+              this.pos = pos;
+              this.vel = vel;
+              this.mass = mass;
+
+              var body = new CompoundPath({
+                  children: [
+                      new Path.Circle({
+	                  radius: mass
+                      })
+                  ],
+                  fillColor: 'black'
+              })
+
+              this.item = new Group({
+                  children: [body],
+                  transformContent: false,
+                  position: this.pos
+              })
+          }
+
+          Body.prototype.force = function(bodies) {
+              this.acc = new Point(0, 0);
+              for (var i = 0; i < bodies.length; i++) {
+                  var dx = bodies[i].pos - this.pos;
+                  var r2 = dx.dot(dx);
+
+                  if (r2 === 0.0) continue;
+
+                  var rinv = 1.0 / Math.sqrt(r2) + EPS;
+                  var rinv2 = rinv*rinv;
+                  var mrinv3 = bodies[i].mass * rinv2 * rinv;
+                  this.acc += dx * mrinv3;
+              }
+          }
+
+          Body.prototype.kick = function(dt) {
+              this.vel += this.acc * dt;
+          }
+
+          Body.prototype.drift = function(dt) {
+              this.pos += this.vel * dt;
+              this.item.set({
+                  position: this.pos
+              })
+          }
+
+          var bodies = [
+              new Body(new Point(view.size.width / 2, view.size.height / 2 - 75),
+                       new Point(0.1, 0),
+                       10.0),
+              new Body(new Point(view.size.width / 2, view.size.height / 2 + 75),
+                       new Point(-0.1, 0),
+                       13.0)
+          ];
+
+
+          function grav() {
+              for (var i = 0, l = bodies.length; i < l; i++) bodies[i].force(bodies);
+          }
+
+          function kick(dt) {
+              for (var i = 0, l = bodies.length; i < l; i++) bodies[i].kick(dt);
+          }
+
+          function drift(dt) {
+              for (var i = 0, l = bodies.length; i < l; i++)  bodies[i].drift(dt);
+          }
+
+          grav();
+          kick(DT/2);
+          function onFrame() {
+              drift(DT);
+              grav();
+              kick(DT);
+          }
+        </script>
+      </div>
+
+      <div class="step slide" data-x="1200">
+        <h1>Three-body motion?</h1>
+        <h2>No analytical solution.</h2>
+        <canvas id="3body" resize></canvas>
+        <script type='text/paperscript' canvas="3body">
+          new Path.Circle({
+              center: [view.size.width / 2 - 200, 150],
+              radius: 50,
+              fillColor: 'red'
+          })
+
+          new Path.Circle({
+              center: [view.size.width / 2 + 150, 200],
+              radius: 44,
+              fillColor: 'green'
+          })
+
+          new Path.Circle({
+              center: [view.size.width / 2, 350],
+              radius: 75,
+              fillColor: 'blue'
+          })
+        </script>
+      </div>
+
+      <div class="step slide" data-x="0" data-y="6000">
+        <h1>Numerical Methods</h1>
+        <h2>Getting an approximation.</h2>
+        <p>Strategy:</p>
+        <ol>
+          <li>Get everyone's acceleration.</li>
+          <li>Update everyone's velocity a little bit.</li>
+          <li>Move everyone a little bit.</li>
+          <li>Repeat until done.</li>
+        </ol>
+        <div class="centering loader">
+          <ion-icon name="reload-outline"></ion-icon>
+        </div>
+      </div>
+
+
+      <div id="bulb" class="step slide" data-x="2400">
+        <p>
+          The first N-Body simulations (Holmberg 1941) used light bulbs on a table.
+        </p>
+        <div class="centering">
+          <img src="/images/Clear_light_bulb.png" alt="Light bulb" />
+        </div>
+      </div>
+      <div id="comp" class="step slide" data-x="3600">
+        <p>
+          Now we use computers.
+        </p>
+        <div class="centering">
+          <img alt="The OzSTAR supercomputer." src="https://supercomputing.swin.edu.au/wp-content/uploads/2020/05/OzSTAR_hires_image-538x280.jpg">
+        </div>
+        <p class="ref">OzSTAR courtesy of Swinburne University.</p>
+      </div>
+
+
+
+      <div id="quadratic" class="step slide" data-x="0" data-y="9000">
+        <h1>As N gets bigger</h1>
+        <div class="stats">
+          <div id="bodycount"></div>
+          <div id="interactions"></div>
+        </div>
+        <canvas resize id="largen">
+        </canvas>
+        <script type='text/paperscript' canvas="largen">
+          var points = [];
+          var interactions = 0;
+
+          function addPoint() {
+              var center = Point.random() * view.size;
+              new Path.Circle({
+                  center: center,
+                  radius: 10,
+                  fillColor: 'black'
+              });
+
+              for (var i = 0; i < points.length; i++) {
+                  new Path.Line({
+                      from: center,
+                      to: points[i],
+                      strokeColor: 'black'
+                  });
+                  interactions += 2;
+              }
+              points.push(center);
+          }
+          function onMouseUp() {
+              var times = 1;
+              if (points.length > 100) {
+                  return;
+              }
+              else if (points.length > 10) {
+                  times = 100;
+              }
+
+              for(var i = 0; i < times; i++) {
+                  addPoint();
+              }
+
+              document.getElementById("bodycount").innerText = "Bodies: " + points.length;
+              document.getElementById("interactions").innerText = "Calculations: " + interactions
+          }
+        </script>
+
+      </div>
+
+      <div class="step slide" data-x="1200" id="effort">
+        <h2>How long would this all take for a realistic cluster of stars?</h2>
+        <div class="container">
+          <ul>
+            <li>\(10^6\) stars \(= 10^{12}\) calculations <em>per step</em>.</li>
+            <li>\(10^{15}\) steps \(= 10^{27}\) calculations in total.</li>
+            <li>\(3 \times 10^9\) calculations/s = <strong>10 Gyrs.</strong></li>
+          </ul>
+          <img src="/images/guess_ill_die.png" alt="Guess I'll die" />
+        </div>
+        <div class="centering">
+          <strong class="fun">I don't have that much time!</strong>
+        </div>
+      </div>
+
+      <div class="step slide" data-x="0" data-y="10500">
+        One solution is to use better hardware. It's still not fast enough.<br />
+        <div class="centering">
+          <img src="/images/GTX_690.jpg" alt="A GPGPU" />
+        </div>
+      </div>
+      <div class="step slide" data-x="1200">
+        <h1>Better Algorithms</h1>
+        The <strong class="red">red</strong> stars are so far away, we can approximate.
+        <canvas id="farforce" resize></canvas>
+        <script type='text/paperscript' canvas="farforce">
+          new Path.Circle({
+              center: [20, 150],
+              fillColor: 'blue',
+              radius: 10
+          })
+
+          new Path.Circle({
+              center: [35, 155],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [50, 160],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [25, 110],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [18, 175],
+              fillColor: 'black',
+              radius: 5
+          })
+
+
+          new Path.Circle({
+              center: [view.size.width - 75, 250],
+              fillColor: 'red',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [view.size.width - 150, 205],
+              fillColor: 'red',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [view.size.width - 125, 110],
+              fillColor: 'red',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [view.size.width - 175, 300],
+              fillColor: 'red',
+              radius: 5
+          })
+
+          new Path.Circle({
+              center: [view.size.width - 125, 205],
+              strokeColor: 'red',
+              radius: 115
+          })
+        </script>
+      </div>
+       <div class="step slide" data-x="2400">
+        <h1>Better Algorithms</h1>
+        The <strong class="red">red</strong> star is isolated and can be updated less frequently.
+        <canvas id="isolate" resize></canvas>
+        <script type='text/paperscript' canvas="isolate">
+          new Path.Circle({
+              center: [20, 150],
+              fillColor: 'black',
+              radius: 5
+          })
+
+          new Path.Circle({
+              center: [35, 155],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [50, 160],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [25, 110],
+              fillColor: 'black',
+              radius: 5
+          })
+          new Path.Circle({
+              center: [18, 175],
+              fillColor: 'black',
+              radius: 5
+          })
+
+
+          new Path.Circle({
+              center: [view.size.width - 75, 250],
+              fillColor: 'red',
+              radius: 5
+          })
+        </script>
+      </div>
+
+
+      <div class="step slide" data-y="12000" data-x="-2000" data-scale="2" >
+        <h1>My Code</h1>
+        <img src="/images/mnras.png" alt="A plot showing that my code is twice as good as the old code." />
+      </div>
+
+      <div id="globular" class="step slide" data-x="1000">
+        <h1>Globular Clusters</h1>
+        <ul>
+          <li>Dense clusters containing hundreds of thousands (or more) of stars.</li>
+          <li>Gravity is the dominant force.</li>
+          <li>Home to exotic objects, like binary black holes.</li>
+          <div class="centering">
+            <img src="/images/ngc1851.jpg" alt="NGC 1851" />
+          </div>
+        </ul>
+      </div>
+      <div class="step video" data-x="2200">
+        <video controls>
+          <source src="/videos/ngc1904.mp4"
+                  type="video/mp4">
+            <a href="/videos/ngc1904.mp4" target="_blank">Download the video.</a>
+        </video>
+      </div>
+      <div class="step slide" data-y="12000" data-x="3400">
+        The final simulated state (present day) is not the same as observations. What are we missing?
+        <img src="images/ComputerProgrammer.jpg" alt="Computer programmer" /><br />
+        There is still more work to do.
+      </div>
+
+      <div id="brisbane" class="step slide" data-y="13500" data-x="0">
+        <h1 class="fun">
+          Fun Fact <ion-icon name="bulb-outline"></ion-icon>
+        </h1>
+        <div class="container">
+          <img src="/images/Thomasbrisbane.jpg" alt="Sir Thomas Brisbane" />
+        <p>
+          Sir Thomas Brisbane, Governor of New South Wales 1821 - 1825, was an astronomer.
+        </p>
+        </div>
+      </div>
+
+      <div id="end" class="step slide" data-x="1000" data-scale="4" data-y="16500" data-rotate-z="180" data-rotate-y="-90">
+        <canvas id="thanks" resize></canvas>
+        <div class="info">
+          <div class="qr">
+            <a href="talk-may22.html">
+              <img alt="QR Code" src="/images/may22-qr.svg" width="300" />
+            </a>
+            <a class="label" href="talk-may22.html">tinyurl.com/4ak9szuu</a>
+          </div>
+          <div class="contact">
+              <a href="https://twitter.com/HoppyAstro" target="_blank">
+                <ion-icon name="logo-twitter"></ion-icon>&nbsp;@HoppyAstro
+              </a>
+              <a href="https://github.com/anthony-arnold" target="_blank">
+                <ion-icon name="logo-github"></ion-icon>&nbsp;anthony-arnold
+              </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div id="impress-toolbar"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.15/paper-full.min.js" integrity="sha512-ovjLI1ZcZe6bw+ImQ21r+sv8q/Vwob2kq7tFidK6E1LWfi0T4uobbmpfEU1//a9h9o5Kkt+MnMWf6rWlg0EiMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="js/impress.min.js"></script>
+    <script>
+      impress().init();
+    </script>
+
+
+    <script type="text/paperscript" canvas="thanks">
+     var EPS = 1.0e-1;
+     var DT = 1.0e-1
+
+     var Body = function(pos, vel, mass) {
+       this.pos = pos;
+       this.vel = vel;
+       this.mass = mass;
+
+       var body = new CompoundPath({
+         children: [
+           new Path.Circle({
+	     radius: mass
+           })
+         ],
+         fillColor: 'black'
+       })
+
+       this.item = new Group({
+         children: [body],
+         transformContent: false,
+         position: this.pos
+       })
+     }
+
+     Body.prototype.force = function(bodies) {
+       this.acc = new Point(0, 0);
+       for (var i = 0; i < bodies.length; i++) {
+         var dx = bodies[i].pos - this.pos;
+         var r2 = dx.dot(dx);
+
+         if (r2 === 0.0) continue;
+
+         var rinv = 1.0 / Math.sqrt(r2) + EPS;
+         var rinv2 = rinv*rinv;
+         var mrinv3 = bodies[i].mass * rinv2 * rinv;
+         this.acc += dx * mrinv3;
+       }
+     }
+
+     Body.prototype.kick = function(dt) {
+       this.vel += this.acc * dt;
+     }
+
+     Body.prototype.drift = function(dt) {
+       this.pos += this.vel * dt;
+       this.item.set({
+         position: this.pos
+       })
+     }
+
+     var bodies = [];
+     function addBody() {
+       var pos = Point.random() * view.size;
+       var vel = Point.random() * 10e-1;
+       var body = new Body(pos, vel, Math.random() * 2);
+       bodies.push(body);
+     }
+
+     function grav() {
+       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].force(bodies);
+     }
+
+     function kick(dt) {
+       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].kick(dt);
+     }
+
+     function drift(dt) {
+       for (var i = 0, l = bodies.length; i < l; i++)  bodies[i].drift(dt);
+     }
+
+     function purge() {
+       var i = 0;
+       while (i < bodies.length) {
+         if (bodies[i].pos.x > view.size.width + 100 ||
+             bodies[i].pos.x < -100 ||
+             bodies[i].pos.y > view.size.height + 100 ||
+             bodies[i].pos.y < -100) {
+           bodies[i].item.remove();
+           bodies.splice(i, 1);
+         }
+         else {
+           i++;
+         }
+       }
+
+     }
+
+     grav();
+     kick(DT/2);
+
+     var counter = 1;
+
+     function onFrame() {
+       drift(DT);
+       grav();
+       kick(DT);
+
+       counter--;
+       if (counter === 0) {
+         counter = 120;
+         if (bodies.length < 75) {
+           addBody();
+         }
+       }
+       purge();
+     }
+
+    </script>
+
+  </body>
+</html>
