@@ -57,85 +57,85 @@
         <h2 id="whatgoesup">What goes up must come down.</h2>
         <canvas id="gravity" resize></canvas>
         <script type='text/paperscript' canvas="gravity">
-          var zoomed = false;
-          var RAD = 10;
-          var pos = new Point(
-              view.size.width / 2,
-              view.size.height / 2 - 200
-          )
-          var target = view.size.height / 2;
-          var vel = 0;
-          var acc = 0.1;
+            var zoomed = false;
+            var RAD = 10;
+            var pos = new Point(
+                view.size.width / 2,
+                view.size.height / 2 - 200
+            )
+            var target = view.size.height / 2;
+            var vel = 0;
+            var acc = 0.1;
 
-          var circle = new Path.Circle({
-	      radius: RAD,
-              fillColor: 'red'
-          })
+            var circle = new Path.Circle({
+            radius: RAD,
+                fillColor: 'red'
+            })
 
-          var ball = new Group({
-              children: [circle],
-              transformContent: false,
-              position: pos
-          })
+            var ball = new Group({
+                children: [circle],
+                transformContent: false,
+                position: pos
+            })
 
-          var r = 3000;
-          var surface = new Path.Circle({
-              radius: r,
-              strokeColor: 'green',
-              center: new Point(
-                  view.size.width / 2,
-                  view.size.height / 2 + r + RAD
-              )
-          })
+            var r = 3000;
+            var surface = new Path.Circle({
+                radius: r,
+                strokeColor: 'green',
+                center: new Point(
+                    view.size.width / 2,
+                    view.size.height / 2 + r + RAD
+                )
+            })
 
-          function onFrame() {
-              if (zoomed) {
-                  if (pos.x - RAD <= target) {
-                      vel = acc - vel;
-                  }
-                  pos.x += vel;
-              }
-              else {
-                  if (pos.y + RAD >= target) {
-                      // Kick up
-                      vel = acc - vel;
-                  }
-                  pos.y += vel;
-              }
-              vel += acc;
+            function onFrame() {
+                if (zoomed) {
+                    if (pos.x - RAD <= target) {
+                        vel = acc - vel;
+                    }
+                    pos.x += vel;
+                }
+                else {
+                    if (pos.y + RAD >= target) {
+                        // Kick up
+                        vel = acc - vel;
+                    }
+                    pos.y += vel;
+                }
+                vel += acc;
 
-              ball.set({
-                  position: pos
-              });
-          }
+                ball.set({
+                    position: pos
+                });
+            }
 
-          function onMouseUp() {
-              if (!zoomed) {
-                  vel = 0;
-                  acc *= -1;
-                  pos.x = view.size.width / 2 + 300;
-                  pos.y = view.size.height / 2;
-                  ball.set({
-                      position: pos
-                  });
+            function onMouseUp() {
+                if (!zoomed) {
+                    vel = 0;
+                    acc *= -1;
+                    pos.x = view.size.width / 2 + 300;
+                    pos.y = view.size.height / 2;
+                    ball.set({
+                        position: pos
+                    });
 
-                  r = 170;
-                  surface.remove()
-                  surface = new Path.Circle({
-                      radius: r,
-                      strokeColor: 'green',
-                      center: new Point(
-                          view.size.width / 2,
-                          view.size.height / 2
-                      )
-                  });
-                  target = view.size.width / 2 + r
+                    r = 170;
+                    surface.remove()
+                    surface = new Path.Circle({
+                        radius: r,
+                        strokeColor: 'green',
+                        center: new Point(
+                            view.size.width / 2,
+                            view.size.height / 2
+                        )
+                    });
+                    target = view.size.width / 2 + r
 
-                  zoomed = true;
+                    zoomed = true;
 
-                  document.getElementById('whatgoesup').innerText = 'What goes out maybe comes back in?'
-              }
-          }
+                    document.getElementById('whatgoesup').innerText = 'What goes out maybe comes back in?'
+                }
+            }
         </script>
       </div>
 
@@ -327,6 +327,7 @@
         </div>
         <canvas resize id="largen">
         </canvas>
+        <div class="centering" id="clickme">[click me]</div>
         <script type='text/paperscript' canvas="largen">
           var points = [];
           var interactions = 0;
@@ -352,6 +353,7 @@
           function onMouseUp() {
               var times = 1;
               if (points.length > 100) {
+                  document.getElementById("clickme").innerHTML = "[no more!]";
                   return;
               }
               else if (points.length > 10) {
@@ -535,23 +537,137 @@
       </div>
 
       <div id="end" class="step slide" data-x="1000" data-scale="4" data-y="16500" data-rotate-z="180" data-rotate-y="-90">
-        <canvas id="thanks" resize></canvas>
-        <div class="info">
-          <div class="qr">
-            <a href="talk-may22.html">
-              <img alt="QR Code" src="/images/may22-qr.svg" width="300" />
-            </a>
-            <a class="label" href="talk-may22.html">tinyurl.com/4ak9szuu</a>
+          <canvas id="thanks" resize></canvas>
+
+          <script type="text/paperscript" canvas="thanks">
+              var EPS = 1.0e-1;
+              var DT = 1.0e-1;
+
+              var Body = function(pos, vel, mass) {
+                this.pos = pos;
+                this.vel = vel;
+                this.mass = mass;
+
+                var body = new CompoundPath({
+                  children: [
+                    new Path.Circle({
+                  radius: mass
+                    })
+                  ],
+                  fillColor: 'black'
+                })
+
+                this.item = new Group({
+                  children: [body],
+                  transformContent: false,
+                  position: this.pos
+                })
+              }
+
+              Body.prototype.force = function(bodies) {
+                this.acc = new Point(0, 0);
+                for (var i = 0; i < bodies.length; i++) {
+                  var dx = bodies[i].pos - this.pos;
+                  var r2 = dx.dot(dx);
+
+                  if (r2 === 0.0) continue;
+
+                  var rinv = 1.0 / Math.sqrt(r2) + EPS;
+                  var rinv2 = rinv*rinv;
+                  var mrinv3 = bodies[i].mass * rinv2 * rinv;
+                  this.acc += dx * mrinv3;
+                }
+              }
+
+              Body.prototype.kick = function(dt) {
+                this.vel += this.acc * dt;
+              }
+
+              Body.prototype.drift = function(dt) {
+                this.pos += this.vel * dt;
+                this.item.set({
+                  position: this.pos
+                })
+              }
+
+              var bodies = [];
+              function addBody() {
+                var pos = Point.random() * view.size;
+                var vel = Point.random() * 10e-1;
+                var body = new Body(pos, vel, Math.random() * 2);
+                bodies.push(body);
+              }
+
+              function grav() {
+                for (var i = 0, l = bodies.length; i < l; i++) bodies[i].force(bodies);
+              }
+
+              function kick(dt) {
+                for (var i = 0, l = bodies.length; i < l; i++) bodies[i].kick(dt);
+              }
+
+              function drift(dt) {
+                for (var i = 0, l = bodies.length; i < l; i++)  bodies[i].drift(dt);
+              }
+
+              function purge() {
+                var i = 0;
+                while (i < bodies.length) {
+                  if (bodies[i].pos.x > view.size.width + 100 ||
+                      bodies[i].pos.x < -100 ||
+                      bodies[i].pos.y > view.size.height + 100 ||
+                      bodies[i].pos.y < -100) {
+                    bodies[i].item.remove();
+                    bodies.splice(i, 1);
+                  }
+                  else {
+                    i++;
+                  }
+                }
+
+              }
+
+              grav();
+              kick(DT/2);
+
+              var counter = 1;
+
+              function onFrame() {
+                 if(window.location.hash !== '#/end') {
+                  return
+                 }
+
+                drift(DT);
+                grav();
+                kick(DT);
+
+                counter--;
+                if (counter === 0) {
+                  counter = 120;
+                  if (bodies.length < 75) {
+                    addBody();
+                  }
+                }
+                purge();
+              }
+
+          </script>
+          <div class="info">
+              <div class="qr">
+                  <a href="talk-may22.html">
+                      <img alt="QR Code" src="/images/may22-qr.svg" width="300" />
+                  </a>
+                  <a class="label" href="talk-may22.html">tinyurl.com/4ak9szuu</a>
+              </div>
+              <div class="contact">
+                  <a href="https://twitter.com/HoppyAstro" target="_blank">
+                      <ion-icon name="logo-twitter"></ion-icon>&nbsp;@HoppyAstro
+                  </a>
+                  <a href="https://github.com/anthony-arnold" target="_blank">
+                      <ion-icon name="logo-github"></ion-icon>&nbsp;anthony-arnold
+                  </a>
+              </div>
           </div>
-          <div class="contact">
-              <a href="https://twitter.com/HoppyAstro" target="_blank">
-                <ion-icon name="logo-twitter"></ion-icon>&nbsp;@HoppyAstro
-              </a>
-              <a href="https://github.com/anthony-arnold" target="_blank">
-                <ion-icon name="logo-github"></ion-icon>&nbsp;anthony-arnold
-              </a>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -562,119 +678,11 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="js/impress.min.js"></script>
     <script>
-      impress().init();
+        var ctx = impress();
+        ctx.init();
     </script>
 
 
-    <script type="text/paperscript" canvas="thanks">
-     var EPS = 1.0e-1;
-     var DT = 1.0e-1
-
-     var Body = function(pos, vel, mass) {
-       this.pos = pos;
-       this.vel = vel;
-       this.mass = mass;
-
-       var body = new CompoundPath({
-         children: [
-           new Path.Circle({
-	     radius: mass
-           })
-         ],
-         fillColor: 'black'
-       })
-
-       this.item = new Group({
-         children: [body],
-         transformContent: false,
-         position: this.pos
-       })
-     }
-
-     Body.prototype.force = function(bodies) {
-       this.acc = new Point(0, 0);
-       for (var i = 0; i < bodies.length; i++) {
-         var dx = bodies[i].pos - this.pos;
-         var r2 = dx.dot(dx);
-
-         if (r2 === 0.0) continue;
-
-         var rinv = 1.0 / Math.sqrt(r2) + EPS;
-         var rinv2 = rinv*rinv;
-         var mrinv3 = bodies[i].mass * rinv2 * rinv;
-         this.acc += dx * mrinv3;
-       }
-     }
-
-     Body.prototype.kick = function(dt) {
-       this.vel += this.acc * dt;
-     }
-
-     Body.prototype.drift = function(dt) {
-       this.pos += this.vel * dt;
-       this.item.set({
-         position: this.pos
-       })
-     }
-
-     var bodies = [];
-     function addBody() {
-       var pos = Point.random() * view.size;
-       var vel = Point.random() * 10e-1;
-       var body = new Body(pos, vel, Math.random() * 2);
-       bodies.push(body);
-     }
-
-     function grav() {
-       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].force(bodies);
-     }
-
-     function kick(dt) {
-       for (var i = 0, l = bodies.length; i < l; i++) bodies[i].kick(dt);
-     }
-
-     function drift(dt) {
-       for (var i = 0, l = bodies.length; i < l; i++)  bodies[i].drift(dt);
-     }
-
-     function purge() {
-       var i = 0;
-       while (i < bodies.length) {
-         if (bodies[i].pos.x > view.size.width + 100 ||
-             bodies[i].pos.x < -100 ||
-             bodies[i].pos.y > view.size.height + 100 ||
-             bodies[i].pos.y < -100) {
-           bodies[i].item.remove();
-           bodies.splice(i, 1);
-         }
-         else {
-           i++;
-         }
-       }
-
-     }
-
-     grav();
-     kick(DT/2);
-
-     var counter = 1;
-
-     function onFrame() {
-       drift(DT);
-       grav();
-       kick(DT);
-
-       counter--;
-       if (counter === 0) {
-         counter = 120;
-         if (bodies.length < 75) {
-           addBody();
-         }
-       }
-       purge();
-     }
-
-    </script>
 
   </body>
 </html>

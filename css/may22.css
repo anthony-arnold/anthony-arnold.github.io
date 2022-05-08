@@ -233,6 +233,14 @@ canvas[resize] {
     height: 100%;
 }
 
+#largen {
+    visibility: hidden;
+}
+
+.active #largen {
+    visibility: visible;
+}
+
 #end {
     position: relative;
     display: flex;
